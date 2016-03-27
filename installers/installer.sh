@@ -64,7 +64,7 @@ cd /tmp/FlamesPanel-v2/
 rpm -Uvh http://www.elrepo.org/elrepo-release-6-6.el6.elrepo.noarch.rpm
 yum --enablerepo=elrepo-kernel -y install kernel-ml
 yum install -y epel-release
-yum install -y nano mysql-server cron gcc gcc-c++ zip unzip
+yum install -y nano mysql-server crontab gcc gcc-c++ zip unzip openssl 
 
 # Set MySQL root password
 
@@ -145,6 +145,8 @@ cd /usr/src
 unzip apache_pkg.zip 
 cd /usr/src/httpd-2.4.16/
 ./configure --with-included-apr && make && make install
+cp /usr/src/httpd-2.4.16/support/apachectl /usr/sbin/apachectl
+chmod 755 /usr/sbin/apachectl
 cd /usr/src
 unzip php5.5_pkg.zip
 cd /usr/src/php-5.5.30
@@ -162,6 +164,15 @@ mkdir /tmp/vhosts
 touch /tmp/vhosts/newvhost.conf
 chmod 000 /tmp/vhosts
 chmod 000 /tmp/vhosts/newvhost.conf
+
+# Setup SSHd
+
+cat << EOFA >> /etc/ssh/sshd_config
+Match Group vzuser
+    ChrootDirectory /systemroot/
+    AllowTCPForwarding no
+    X11Forwarding no
+EOFA
 
 # Set up virtual host cron job
 
@@ -206,6 +217,8 @@ EOFB
 useradd -d /home/admin -m admin
 chmod 700 /home/admin
 echo -e "$adminpass\n$adminpass" | passwd admin
+cat sudoers.new > /etc/sudoers
+passwd -l root
 
 clear
 sleep 5
