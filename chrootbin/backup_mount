@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "================================"
+echo "= MOUNT ALLOCATED BACKUP SPACE ="
+echo "================================"
+echo " "
+if [ ! -d "/home/$USER/REMOTESSHFS" ]; then
+echo "Please activate your backup space from the control panel."
+else
+echo "Connecting to server..."
+sshfs -p 21045 $USER@cp.flameshost.com:/ /home/$USER/REMOTESSHFS 
+echo "If everything is in order, you should be able to access your backup directory at ~/REMOTESSHFS."
+echo " "
+fi

@@ -1,0 +1,107 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+echo "No domain name was specified."
+else
+if [ -z "$2" ]; then
+echo "No domain name was specified."
+else
+if [ ! -z $(cat /etc/httpd/conf.d/vhosts.conf | grep $1) ]; then
+echo "Sorry, but the domain name already exists in our system."
+else
+if [ ! -z $(cat /tmp/vhosts/newvhost.conf | grep $1) ]; then
+echo "Sorry, but the domain name specified is already pending for setup."
+else
+if [ ! -z $(echo "$1" | grep cp.flameshost.com) ]; then
+echo "Illegal domain name."
+else
+echo "[FP] Setting up pre-resquites..."
+mkdir /srv/bandwidth/$2 &> /dev/null
+touch /home/$2/$1-access.log
+touch /home/$2/$1-error.log
+mkdir /home/$2/public_html/$1
+chmod 700 /home/$2/$1-*.log
+chmod 700 /home/$2/public_html/$1
+chown $2:$2 /home/$2/$1-*.log
+chown $2:$2 /home/$2/public_html/$1
+echo "[FP] Setting up virtual host..."
+ipv6_addr=$(/bin/assign_ipv6 assign)
+/bin/assign_ipv6 use &>/dev/null
+echo "<VirtualHost [$ipv6_addr]:80>" >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+echo "ServerName $1 " >> /tmp/vhosts/newvhost.conf
+echo "ServerAlias www.$1 " >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+ispremium=$(/bin/is_premium $2)
+if [ "$ispremium" == "0" ]; then
+echo "CBandLimit 5G" >> /tmp/vhosts/newvhost.conf
+echo "CBandPeriod 4W" >> /tmp/vhosts/newvhost.conf
+echo "CBandScoreboard /srv/bandwidth/$2/mod_bw-$1.conf" >> /tmp/vhosts/newvhost.conf
+echo "CBandDefaultExceededURL https://cp.flameshost.com/error/bandwidth_exceeded" >> /tmp/vhosts/newvhost.conf
+else
+echo "CBandLimit 25G" >> /tmp/vhosts/newvhost.conf
+echo "CBandPeriod 4W" >> /tmp/vhosts/newvhost.conf
+echo "CBandScoreboard /srv/bandwidth/$2/mod_bw-$1.conf" >> /tmp/vhosts/newvhost.conf
+echo "CBandDefaultExceededURL https://cp.flameshost.com/error/bandwidth_exceeded" >> /tmp/vhosts/newvhost.conf
+fi
+echo "<Location /myBW>" >> /tmp/vhosts/newvhost.conf
+echo "SetHandler cband-status-me" >> /tmp/vhosts/newvhost.conf
+echo "</Location>" >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+echo "DocumentRoot /home/$2/public_html/$1" >> /tmp/vhosts/newvhost.conf
+echo "CustomLog /home/$2/$1-access.log combined" >> /tmp/vhosts/newvhost.conf
+echo "ErrorLog /home/$2/$1-error.log" >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+echo "  AssignUserId $2 $2" >> /tmp/vhosts/newvhost.conf
+echo "</VirtualHost>" >> /tmp/vhosts/newvhost.conf
+
+echo "# ipv6 section of the virtual host is above" >> /tmp/vhosts/newvhost.conf
+
+echo "<VirtualHost *:80>" >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+echo "ServerName $1 " >> /tmp/vhosts/newvhost.conf
+echo "ServerAlias www.$1 " >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+ispremium=$(/bin/is_premium $2)
+if [ "$ispremium" == "0" ]; then
+echo "CBandLimit 5G" >> /tmp/vhosts/newvhost.conf
+echo "CBandPeriod 4W" >> /tmp/vhosts/newvhost.conf
+echo "CBandScoreboard /srv/bandwidth/$2/mod_bw-$1.conf" >> /tmp/vhosts/newvhost.conf
+echo "CBandDefaultExceededURL https://cp.flameshost.com/error/bandwidth_exceeded" >> /tmp/vhosts/newvhost.conf
+else
+echo "CBandLimit 25G" >> /tmp/vhosts/newvhost.conf
+echo "CBandPeriod 4W" >> /tmp/vhosts/newvhost.conf
+echo "CBandScoreboard /srv/bandwidth/$2/mod_bw-$1.conf" >> /tmp/vhosts/newvhost.conf
+echo "CBandDefaultExceededURL https://cp.flameshost.com/error/bandwidth_exceeded" >> /tmp/vhosts/newvhost.conf
+fi
+echo "<Location /myBW>" >> /tmp/vhosts/newvhost.conf
+echo "SetHandler cband-status-me" >> /tmp/vhosts/newvhost.conf
+echo "</Location>" >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+echo "DocumentRoot /home/$2/public_html/$1" >> /tmp/vhosts/newvhost.conf
+echo "CustomLog /home/$2/$1-access.log combined" >> /tmp/vhosts/newvhost.conf
+echo "ErrorLog /home/$2/$1-error.log" >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+echo "	AssignUserId $2 $2" >> /tmp/vhosts/newvhost.conf
+echo "</VirtualHost>" >> /tmp/vhosts/newvhost.conf
+echo "# $1 / $2" >> /tmp/vhosts/newvhost.conf
+echo "# $ipv6_addr - $1" >> /tmp/vhosts/newvhost.conf
+echo "  " >> /tmp/vhosts/newvhost.conf
+echo "<title>Welcome to FlamesPanel!</title>" >> /home/$2/public_html/$1/index.html
+echo "<h1>Welcome to a new FlamesPanel website!</h1>" >> /home/$2/public_html/$1/index.html
+echo "<p>The owner of this website has not uploaded any content - please try again later.</p>" >> /home/$2/public_html/$1/index.html
+echo "[FP] Please allow for up to 5 minutes for the server to activate your virtual host."
+echo "[FP] Here are your nameservers should you not wish to use CloudFlare: "
+echo " "
+echo "Your dedicated IPv6 address for this website: $ipv6_addr"
+chown $2:$2 /home/$2/public_html/$1/index.html
+echo " "
+echo "== Your nameservers  ================================"
+echo "= Nameserver 1: ns1-flamespanel.flameshost.com      ="
+echo "= Nameserver 2: ns2-flamespanel.flameshost.com      ="
+echo "====================================================="
+fi
+fi
+fi
+fi
+fi

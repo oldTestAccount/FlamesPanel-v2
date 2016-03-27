@@ -15,7 +15,6 @@ $username = $_SESSION['username'];
 
 if ($_POST['type_of_domain'] == "subdomain"){
 $_POST['domain_name'] = preg_replace('/[.,]/', '', $_POST["domain_name"]);
-$_POST['domain_name'] = $_POST['domain_name'].".userspace.flameshost.com";}
 
 $currentvhost = shell_exec('cat /etc/httpd/conf.d/vhosts.conf');
 $pending = shell_exec('cat /tmp/vhosts/newvhost.conf');
@@ -45,12 +44,6 @@ $tmpCheck = shell_exec('/bin/tmp_check '.$domain);
 <p>This is where you can add hosted domains to your account</p>
 <p>Do note, custom domains <b>MUST EXIST</b> in the WHOIS database and be registered.</p>
 <?php
-$bwcalc = shell_exec('/bin/is_premium '.$username);
-if ($bwcalc == 1){
-$bw = "25GB"; 
-} else {
-$bw = "5GB";
-}
 ?>
 <p>Bandwidth allocated per website: <b><?php echo $bw; ?></b> </p>
 <?php
@@ -62,17 +55,6 @@ if (!isset($_POST['domain_name'])){
 <span class="input-group-btn">
 <button id="activateBtn" onclick="loading()" type="submit" form="createAcct" value="Add website" class="btn btn-success">Submit</button>
 </span>
-</div>
-</form>
-<br>
-<form id="addSubdomain" action="." method="POST" onsubmit="loading2();">
-  <input type="hidden" value="subdomain" name="type_of_domain" />
-<div class="input-group">
-  <input id="domainBox2" type="text" class="form-control" name="domain_name" placeholder="yoursubdomain.userspace.flameshost.com" aria-describedby="basic-addon2">
-  <span class="input-group-addon" id="basic-addon2">.userspace.flameshost.com</span>
-  <span class="input-group-btn">
-<button id="activateBtn2" onclick="loading2()" type="submit" form="addSubdomain" value="Add subdomain" class="btn btn-primary">Add subdomain</a>
-  </span>
 </div>
 </form>
 
@@ -128,41 +110,23 @@ $pendingWebsites = str_replace("/ ".$username, "", $pendingWebsites2);
       <tr>
         <th>Website</th>
         <th>Bandwidth</th>
-        <th>Dedicated IPv6 Address</th>
         <th>Logs</th>
-        <th>Purge Website</th>
       </tr>
     </thead>
     <tbody>
 
 <?php
-//$separator = "\r\n";
-//$line = strtok($websites, $separator);
-//$line = strtok($websites, $separator);
-//while ($line !== false) {
-//    # do something with $line
-//    $line = strtok($separator);
-//    $trimmed = trim($line);
-//    if (empty($trimmed)){
-//    } else {
-//    echo $trimmed." - <a href='http://".$trimmed."/myBW' target='_blank'>Bandwidth Viewer</a><br>";
-//    }
-//}
+
 if (preg_match('/none/',$websites)){
 echo '<tr><td>None</td><td></td><td></td><td></td><td></td></tr>';
 } else {
-
 
 $lines = split("\n", $websites);
 foreach ($lines as $line) {
     $trimmed = trim($line);
     if (empty($trimmed)){
     } else {
-    $ipv6_of_domain = shell_exec('/bin/apache_getv6 '.$trimmed);
-    $processedv6 = str_replace("#", "", $ipv6_of_domain);
-    $finalv62 = str_replace("- ".$trimmed, "", $processedv6);
-    $finalv6 = trim($finalv62);
-    echo '<tr><td>'.$trimmed."</td><td><a href='http://".$trimmed."/myBW' target='_blank' class='btn btn-success'>Bandwidth Viewer</a></td><td>".$finalv6."</td><td><a target='_blank' href='/dashboard/manage-websites/view_logs.php?domain=".$trimmed."' class='btn btn-info'>View Logs</a></td><td><a href='delete_website.php?domain=".$trimmed."' target='_blank' class='btn btn-danger'>Delete Website</a></td></tr>";
+    echo '<tr><td>'.$trimmed."</td><td><a href='http://".$trimmed."/myBW' target='_blank' class='btn btn-success'>Bandwidth Viewer</a></td><td><a target='_blank' href='/dashboard/manage-websites/view_logs.php?domain=".$trimmed."' class='btn btn-info'>View Logs</a></td></tr>";
     }
 }  
 }

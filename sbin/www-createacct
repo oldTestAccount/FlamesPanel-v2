@@ -1,0 +1,41 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo 'Error: No username specified.'
+echo "Error"
+else
+if [ -z "$2" ]; then
+echo 'Error: No password specified.'
+echo "Error"
+else
+if [ -d "/home/$1" ]; then
+echo 'Error: User already exists.';
+echo "Error"
+else
+echo "Adding user..."
+useradd -s /bin/fbash -m -d /home/$1 $1
+echo "Configuring CHROOT..."
+usermod -G vzuser $1
+echo "Changing password..."
+echo -e "$2\n$2" | passwd $1
+echo "Adding public_html for user $1..."
+mkdir /home/$1/public_html
+echo "Fixing directory ownership..."
+chown $1:$1 /home/$1
+chown $1:$1 /home/$1/*
+echo "Fixing permissions..."
+chmod 700 /home/$1
+chmod 700 /home/$1/
+chmod 700 /home/$1/public_html
+chmod 700 /home/$1/*
+echo "Setting quotas..."
+setquota -u $1 --format=vfsv0 0 256000 0 50000 0 -a /dev/sda1
+echo "Configuring MySQL..."
+mysql -uroot -p$MYSQLPASS -e "create user '$1' identified by '3f591l19i19b1c1';"
+mysql -uroot -p$MYSQLPASS -e "create database $1_firstdb;"
+mysql -uroot -p$MYSQLPASS -e "GRANT ALL PRIVILEGES ON \`$1\_%\` .  * TO '$1'@'localhost' WITH MAX_QUERIES_PER_HOUR 1000 MAX_UPDATES_PER_HOUR 1000 MAX_USER_CONNECTIONS 5;"
+mysql -uroot -p$MYSQLPASS -e "grant usage on *.* to '$1'@'localhost' with max_queries_per_hour 1000 max_user_connections 5;"
+echo "Account creation complete!"
+echo "Success"
+fi
+fi
+fi

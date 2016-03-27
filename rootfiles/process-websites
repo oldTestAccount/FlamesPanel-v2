@@ -1,0 +1,21 @@
+#!/bin/bash 
+echo "[FP] DomainCRON activated."
+echo "[FP] Moving all virtual host files to the Apache directory..."
+cp /tmp/vhosts/newvhost.conf /etc/httpd/conf.d/newvhost.conf
+configtest=$(apachectl -t)
+if [ -z $(echo "$configtest" | grep "Syntax error") ]; then
+cat /tmp/vhosts/newvhost.conf >> /etc/httpd/conf.d/vhosts.conf
+rm -rf /tmp/vhosts/newvhost.conf
+touch /tmp/vhosts/newvhost.conf
+chmod 733 /tmp/vhosts/newvhost.conf
+echo "[FP] Restarting Apache..."
+rm -rf /etc/httpd/conf.d/newvhost.conf
+/usr/sbin/apachectl -k graceful
+else
+rm -rf /etc/httpd/conf.d/newvhost.conf
+date=$(date +"%m-%d-%y.%H-%M-%S")
+cp /tmp/vhosts/newvhost.conf /tmp/vhosts/newvhost-$date.conf
+echo "" > /tmp/vhosts/newvhost.conf
+/usr/sbin/apachectl start
+echo "WARNING: APACHE CONFIGURATION INVALID. NOT MOVING VIRTUALHOSTS."
+fi

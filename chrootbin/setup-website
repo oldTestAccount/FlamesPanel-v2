@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "--- Notice ------------------------------------------------------"
+echo "-                                                               -"
+echo "-  This command has been disabled by the system administrator.  -"
+echo "-  Please use the control panel to setup a website.             -"
+echo "-                                                               -"
+echo "-----------------------------------------------------------------"

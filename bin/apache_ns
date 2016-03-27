@@ -1,0 +1,14 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Usage: /bin/apache_ns domainfor.nameserver.access"
+else
+#echo ' ' >> /etc/named.conf
+#echo '        zone "'"$1"'" IN {' >> /etc/named.conf
+#echo '                type master; ' >> /etc/named.conf
+#echo '                file "/etc/bind/default-zone";' >> /etc/named.conf
+#echo '                allow-update { none; };' >> /etc/named.conf
+#echo '        };' >> /etc/named.conf
+echo "[FP] Adding to bind DNS server..."
+service named restart
+echo "[FP] Success!"
+fi

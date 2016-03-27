@@ -1,0 +1,12 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Usage: /sbin/port_info port"
+echo "This command returns information on a port's usage."
+else
+if [ $1 -eq $1 2> /dev/null ]; then
+netstat -tulpn | grep :$1
+else
+echo "The port you specified is invalid."
+fi
+fi
+

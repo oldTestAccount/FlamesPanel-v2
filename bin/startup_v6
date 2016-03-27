@@ -1,0 +1,6 @@
+filename="/ipv6_used"
+while read -r line
+do
+    name=$line
+ip -6 addr add $name dev eth0    
+done < "$filename"

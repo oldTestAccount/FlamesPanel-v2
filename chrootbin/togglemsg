@@ -1,0 +1,24 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "This program toggles live messages."
+echo "Usage: /bin/togglemsg y/no/status"
+else
+if [ "$1" == "y" ]; then
+mesg y
+echo "Now allowing messages to be sent to your terminal."
+echo "You will also receive important notices from the system administrator."
+else
+if [ "$1" == "n" ]; then
+mesg n
+echo "Now blocking messages to your terminal."
+echo "You will no longer receive important notices from the system administrator."
+else
+if [ "$1" == "status" ]; then
+mesg
+else
+echo "This program toggles live messages."
+echo "Usage: /bin/togglemsg y/no"
+fi
+fi
+fi
+fi

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+echo "Usage: /bin/apache_findlimit username"
+else
+limitu=$(quota -s $1 | awk '{print $4}' | grep M)
+limit=$(echo $limitu | sed 's/.$//')
+usage=$(du -sbh /home/$1 | awk '{print $1}' | grep -e K -e M -e G)
+unit=$(echo -n "$usage" | tail -c 1)
+if [ "$unit" == "G" ]; then
+unformattedusage=$(echo "${usage%?}")
+a="1024"
+processedusage=$(echo "$unformattedusage*$a" | bc)
+pusage=$(echo ${processedusage%.*})
+newusage=$(echo "${pusage}")
+else
+unformattedusage=$(echo "${usage%?}")
+newusage=$(echo "$unformattedusage")
+fi
+
+if [ "$2" == "-m" ]; then
+echo "$limit"M
+else
+echo "$limit"
+fi
+fi
+

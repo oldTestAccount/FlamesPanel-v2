@@ -12,53 +12,6 @@ $username = $_SESSION['username'];
 <h1>Account Information</h1>
 <p>This is where you can manage your account (your password, and security-related functions).</p>
 <br>
-<div class="panel panel-info">
-<div class="panel-heading"><b>Your Profile</b></div>
-<div class="panel-body">
-<?php
-$con = mysql_connect('127.0.0.1', 'admin', 'whytellme123');
-mysql_select_db('admin_userdb');
-$emailquery = mysql_query('select email from emails where username="'.$username.'";');
-$num_rows = mysql_num_rows($emailquery);
-if ($num_rows == "0"){
-$useremail = 'None.';
-} else {
-while($row = mysql_fetch_assoc($emailquery)){
-$useremail = $row["email"];
-}
-}
-
-if (!empty($_POST['email'])){
-$newemail = $_POST['email'];
-if (filter_var($newemail, FILTER_VALIDATE_EMAIL)) {
-// check if email record exists
-if ($useremail == "None."){
-$newquery = 'insert into emails (email, username) VALUES ("'.$newemail.'", "'.$username.'");';
-mysql_query($newquery);
-echo '<div class="alert alert-success"><b>Success:</b> Email updated!</div>';
-} else {
-$newquery = 'update emails set email="'.$newemail.'" where username="'.$username.'";';
-mysql_query($newquery);
-echo '<div class="alert alert-success"><b>Success:</b> Email updated!</div>';
-}
-} else {
-echo '<div class="alert alert-danger"><b>Error:</b> The email you specified is invalid.</div>';
-}
-}
-
-?>
-<p><b>The email on file:</b> <?php echo $useremail; ?></p> 
-<form action="." method="POST">
-<div class="input-group">
-<input type="email" placeholder="Your email..." name="email" class="form-control">
-<span class="input-group-btn">
-<input type="submit" class="btn btn-success" value="Update email">
-</span>
-</div>
-</form>
-</div>
-</div>
-<br>
 <div class="panel panel-success">
 <div class="panel-heading"><b>Change your account's password</b></div>
 <div class="panel-body">

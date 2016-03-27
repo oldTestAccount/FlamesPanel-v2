@@ -1,0 +1,11 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Usage: /bin/apache_getv6 domain"
+else
+websites=$(cat /etc/httpd/conf.d/vhosts.conf | grep " - $1")
+if [ -z "$websites" ]; then
+echo "none"
+else
+echo "$websites"
+fi
+fi

@@ -1,0 +1,12 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Usage: /bin/is_premium username"
+else
+currentgroup=$(groups $1)
+ispremium=$(echo "$currentgroup" | grep premium)
+if [ "$currentgroup" == "$1 : $1 premium" ]; then
+echo "1"
+else
+echo "0"
+fi
+fi

@@ -1,0 +1,23 @@
+#!/bin/bash
+echo "Getting available port for use..."
+freeport=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (20000..24999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+freeport1=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (25000..29999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+freeport2=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (30000..34999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+freeport3=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (35000..39999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+freeport4=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (40000..44999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+freeport5=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (45000..49999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+freeport6=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (50000..54999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+freeport7=$(netstat -atn | perl -0777 -ne '@ports = /tcp.*?\:(\d+)\s+/imsg ; for $port (55000..59999) {if(!grep(/^$port$/, @ports)) { print $port; last } }')
+
+echo "Success! Here are eight ports that you may use."
+echo "-- List of ports -----"
+echo "- $freeport              -"
+echo "- $freeport1              -" 
+echo "- $freeport2              -"
+echo "- $freeport3              -"
+echo "- $freeport4              -"
+echo "- $freeport5              -"
+echo "- $freeport6              -"
+echo "- $freeport7              -"
+echo "----------------------"	
+

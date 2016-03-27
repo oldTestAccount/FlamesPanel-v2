@@ -1,0 +1,12 @@
+#!/bin/bash
+echo "--- Notice ------------------------------------------------------"
+echo "-                                                               -"
+echo "-  This command has been disabled by the system administrator.  -"
+echo "-  Displaying usage information for your user instead:          -"
+echo "-                                                               -"
+echo "-----------------------------------------------------------------"
+echo " "
+usage
+
+
+

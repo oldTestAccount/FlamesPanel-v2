@@ -1,0 +1,25 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Usage: /bin/checkport port"
+echo "This program checks if a port is available for use."
+else
+if ! [[ "$1" =~ ^[0-9]+$ ]]; then
+echo "Sorry, but the port number you specified is invalid."
+else
+if [ "$1" -lt "1001" ]; then
+echo "Ports under this range are for system services only."
+else
+if [[ "$1" -gt 19999 && "$1" -lt 65556 ]]; then
+check=$(nc -z localhost $1 &> /dev/null; echo $?)
+if [ "$check" == "1" ]; then
+echo "The port $1 is currently not in use. Feel free to use it :)"
+else
+echo "The port $1 is currently in use. Sorry!"
+fi
+else
+echo "The port must be within the 20000-65555 range."
+fi
+fi
+fi
+fi
+

@@ -1,0 +1,98 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Usage: /sbin/wordpress_db username password domain db_name"
+else 
+if [ -z "$2" ]; then
+echo "Usage: /sbin/wordpress_db username password domain db_name"
+else
+if [ -z "$3" ]; then
+echo "Usage: /sbin/wordpress_db username password domain db_name"
+else
+
+mysqlpassprocess=$(cat /home/root/public_html/dashboard/config.php | sed "s/.*'\(.*\)'[^']*$/\1/")
+mysqlpasstagrm=$(echo $mysqlpassprocess | sed -e 's/<?php//g')
+MYSQLPASS=$(echo $mysqlpasstagrm | sed -e 's/?>//g')
+
+mysql -uroot -p$MYSQLPASS -e "create database $1_$4;"
+mysql -uroot -p$MYSQLPASS -e "use $1_$4; GRANT ALL ON $1_$4.* TO '$1'@'localhost';"
+touch /home/$1/public_html/$3/wp-config.php
+#cat <<EOF > /home/$1/public_html/$3/wp-config.php
+echo "
+<?php
+
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define('DB_NAME', '$1_$4');
+
+/** MySQL database username */
+define('DB_USER', '$1');
+
+/** MySQL database password */
+define('DB_PASSWORD', '$2');
+
+/** MySQL hostname */
+define('DB_HOST', '127.0.0.1');
+
+/** Database Charset to use in creating database tables. */
+define('DB_CHARSET', 'utf8');
+
+/** The Database Collate type. Don't change this if in doubt. */
+define('DB_COLLATE', '');
+
+/**#@+
+ * Authentication Unique Keys and Salts.
+ *
+ * Change these to different unique phrases!
+ * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}
+ * You can change these at any point in time to invalidate all existing cookies. This will force all users to have to log in again.
+ *
+ * @since 2.6.0
+ */
+define('AUTH_KEY',         '410572484392956904222389231328841955115744222776843047');
+define('SECURE_AUTH_KEY',  '410572484392956904222389231328841955115744222776843047');
+define('LOGGED_IN_KEY',    '410572484392956904222389231328841955115744222776843047');
+define('NONCE_KEY',        '410572484392956904222389231328841955115744222776843047');
+define('AUTH_SALT',        '410572484392956904222389231328841955115744222776843047');
+define('SECURE_AUTH_SALT', '410572484392956904222389231328841955115744222776843047');
+define('LOGGED_IN_SALT',   '410572484392956904222389231328841955115744222776843047');
+define('NONCE_SALT',       '410572484392956904222389231328841955115744222776843047');
+
+/**#@-*/
+
+/**
+ * WordPress Database Table prefix.
+ *
+ * You can have multiple installations in one database if you give each
+ * a unique prefix. Only numbers, letters, and underscores please!
+ */
+
+\$table_prefix  = 'wp_';
+
+/**
+ * For developers: WordPress debugging mode.
+ *
+ * Change this to true to enable the display of notices during development.
+ * It is strongly recommended that plugin and theme developers use WP_DEBUG
+ * in their development environments.
+ *
+ * For information on other constants that can be used for debugging,
+ * visit the Codex.
+ *
+ * @link https://codex.wordpress.org/Debugging_in_WordPress
+ */
+define('WP_DEBUG', false);
+
+/* That is all, stop editing! Happy blogging. */
+
+/** Absolute path to the WordPress directory. */
+if ( !defined('ABSPATH') )
+        define('ABSPATH', dirname(__FILE__) . '/');
+
+/** Sets up WordPress vars and included files. */
+require_once(ABSPATH . 'wp-settings.php');
+" > /home/$1/public_html/$3/wp-config.php
+chown -R $1:$1 /home/$1/public_html/$3/*
+echo 'Success!'
+fi
+fi
+fi

@@ -1,0 +1,46 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Missing username."
+echo "Usage: /sbin/killacct username [ignoresafetywarning: y/n]"
+else
+
+if [ "$2" == "y" ]; then
+echo "Locking password of $1..."
+usermod -l $1
+echo "Locking home directory..."
+chattr +i -R /home/$1
+echo "Killing processes owned by $1..."
+killall -u $1
+echo "Revoking MySQL privileges..."
+mysqlpassprocess=$(cat /home/root/public_html/dashboard/config.php | sed "s/.*'\(.*\)'[^']*$/\1/")
+mysqlpasstagrm=$(echo $mysqlpassprocess | sed -e 's/<?php//g')
+MYSQLPASS=$(echo $mysqlpasstagrm | sed -e 's/?>//g')
+mysql -uroot -p$MYSQLPASS -e "DROP USER '$1'@'localhost';"
+mysql -uroot -p$MYSQLPASS -e "DROP USER '$1'@'%';"
+echo "Account termination successful!"
+else
+if [ "$2" != "y" ]; then
+echo "Do you understand the consequences of what this may cause?"
+echo "Options: yes/no"
+read answer
+if [ "$answer" == "yes" ]; then
+echo "Locking password of $1..."
+usermod -l $1
+echo "Locking home directory..."
+chattr +i -R /home/$1
+echo "Killing processes owned by $1..."
+killall -u $1
+echo "Revoking MySQL privileges..."
+mysqlpassprocess=$(cat /home/root/public_html/dashboard/config.php | sed "s/.*'\(.*\)'[^']*$/\1/")
+mysqlpasstagrm=$(echo $mysqlpassprocess | sed -e 's/<?php//g')
+MYSQLPASS=$(echo $mysqlpasstagrm | sed -e 's/?>//g')
+mysql -uroot -p$MYSQLPASS -e "DROP USER '$1'@'localhost';"
+mysql -uroot -p$MYSQLPASS -e "DROP USER '$1'@'%';"
+echo "Account termination successful!"
+else
+echo "Termination process cancelled."
+fi
+fi
+fi
+fi
+

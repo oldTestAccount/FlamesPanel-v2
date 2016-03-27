@@ -1,0 +1,54 @@
+#!/bin/bash
+
+currentgroup=$(groups $USER)
+
+if [ ! -z $(echo $currentgroup | grep vzuser) ]; then
+memlimit="Your memory limit is set to: 64MB."   
+else
+if [ ! -z $(echo $currentgroup | grep chroot) ]; then
+memlimit="Your memory limit is set to: 64MB."   
+else
+memlimit="Your memory limit is set to: 256MB, and you're currently are using a premium account."
+fi
+fi
+
+limit=$(quota -s $USER | awk '{print $4}' | grep M)
+usage=$(du -sbh /home/$USER | awk '{print $1}' | grep -e K -e M -e G)
+
+unit=$(echo -n "$usage" | tail -c 1)
+if [ "$unit" == "G" ]; then
+unformattedusage=$(echo "${usage%?}")
+a="1024"
+processedusage=$(echo "$unformattedusage*$a" | bc)
+pusage=$(echo ${processedusage%.*})
+newusage=$(echo "${pusage}M")
+fi
+
+if [ "$limit" == "$usage" ] || [ "$limit" == "$newusage" ]; then
+echo "----/ ${USER}'s usage statistics /-_______________"
+echo " "
+echo "Your disk quota has been reached. Please remove some files to reduce your usage, or contact support."
+echo "Inodes: $(ls -1 /home/$USER | wc -l)/UNLIMITED"
+echo "Bandwidth: None/UNLIMITED MB"
+echo "$memlimit"
+echo " "
+else
+if [ -z "$newusage" ]; then
+echo "----/ ${USER}'s usage statistics /-_______________"
+echo " "
+echo "Disk space usage: $usage/$limit"
+echo "Inodes: $(ls -1 /home/$USER | wc -l)/UNLIMITED"
+echo "Bandwidth: None/UNLIMITED MB"
+echo "$memlimit"
+echo " "
+else
+echo "----/ ${USER}'s usage statistics /-_______________"
+echo " "
+echo "Disk space usage: $newusage/$limit"
+echo "Inodes: $(ls -1 /home/$USER | wc -l)/UNLIMITED"
+echo "Bandwidth: None/UNLIMTIED MB"
+echo "$memlimit"
+echo " "
+fi
+fi
+

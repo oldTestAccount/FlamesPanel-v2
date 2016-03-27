@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+echo "Usage: /sbin/sshfs_passwd password"
+else
+cmd=$(/usr/local/flamespanel/sshfs_passwd $1)
+cmdvar=$(echo $cmd | sed -e 's/\<Segmentation Fault\>//g')
+cmdvar2=$(echo $cmdvar | sed 's/.,./.,\\./g')
+echo $cmdvar2
+fi

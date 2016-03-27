@@ -1,0 +1,14 @@
+#!/bin/bash
+echo "=================================="
+echo "= UNMOUNT ALLOCATED BACKUP SPACE ="
+echo "=================================="
+echo " "
+if [ ! -d "/home/$USER/REMOTESSHFS" ]; then
+echo "Please activate your backup space from the control panel."
+else
+echo "Attempting unmount."
+fusermount -u /home/$USER/REMOTESSHFS 
+echo "If everything is in order, you should not be able to access ~/REMOTESSHFS's contents any longer."
+echo " "
+fi
+
