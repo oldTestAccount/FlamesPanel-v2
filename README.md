@@ -12,12 +12,15 @@ Anyways, installing FlamesPanel is very easy - all you have to do is execute the
 That's all to it - here's how you can use some of the command-line utilities once you've installed FlamesPanel.
 
 ###Create an account:
-   /sbin/www-createacct username password
+
+    /sbin/www-createacct username password
 
 ###Terminate an account:
-   /sbin/killacct username
+
+    /sbin/killacct username
 
 ###Change password for an user:
-   /sbin/changepassword username newpassword
+
+    /sbin/changepassword username newpassword
    
 If there are any bugs, please open up an issue or if you know the fix to the problem, feel free to commit the patch :)
